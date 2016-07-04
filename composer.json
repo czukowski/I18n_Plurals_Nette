@@ -1,0 +1,26 @@
+{
+	"name": "czukowski/i18n-nette",
+	"type": "library",
+	"description": "Nette Framework adapter for I18n package",
+	"keywords": ["i18n", "plurals"],
+	"homepage": "https://github.com/czukowski/I18n_Plural_Nette",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Korney Czukowski",
+			"homepage": "http://это-я.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/czukowski/I18n_Plural_Nette/issues"
+	},
+	"require": {
+		"php": ">=5.3.0",
+		"nette/neon": "~2.2"
+	},
+	"autoload": {
+		"psr-0": {
+			"I18n\\": "classes/"
+		}
+	}
+}
