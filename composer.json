@@ -2,7 +2,7 @@
 	"name": "czukowski/i18n-nette",
 	"type": "library",
 	"description": "Nette Framework adapter for I18n package",
-	"keywords": ["i18n", "plurals"],
+	"keywords": ["i18n", "plurals", "nette"],
 	"homepage": "https://github.com/czukowski/I18n_Plural_Nette",
 	"license": "MIT",
 	"authors": [
