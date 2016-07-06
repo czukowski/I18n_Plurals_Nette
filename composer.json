@@ -16,11 +16,25 @@
 	},
 	"require": {
 		"php": ">=5.3.0",
+		"czukowski/i18n": "~1.0",
+		"nette/caching": "~2.2",
 		"nette/neon": "~2.2"
 	},
+	"require-dev": {
+		"phpunit/phpunit": "~4.5"
+	},
 	"autoload": {
+		"psr-4": {
+			"I18n\\Nette\\": "classes"
+		}
+	},
+	"autoload-dev": {
+		"files": ["vendor/czukowski/i18n/tests/I18n/helpers.php"],
 		"psr-0": {
-			"I18n\\": "classes/"
+			"I18n\\": "vendor/czukowski/i18n/tests/"
+		},
+		"psr-4": {
+			"I18n\\Nette\\": "tests"
 		}
 	}
 }
