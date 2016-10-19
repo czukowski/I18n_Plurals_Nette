@@ -211,3 +211,8 @@ and `$lang` is the 3rd argument.
   * @return  I18n\Core
 
 Returns the internal Core object reference if needed for some reason.
+
+License
+-------
+
+The distribution is permitted under the MIT License. See LICENSE.md for details.
