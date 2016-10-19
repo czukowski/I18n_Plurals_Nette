@@ -58,14 +58,14 @@ class NetteExtension extends CompilerExtension
 			->setClass('I18n\Reader\PrefetchingReader')
 			->setArguments(array($this->prefix('@cache')));
 		$cache = $container->addDefinition($this->prefix('cache'))
-			->setClass('I18n\Reader\NetteCacheWrapper')
+			->setClass('I18n\Nette\NetteCacheWrapper')
 			->setArguments(array($this->prefix('@cacheService')));
 
 		foreach ($config['directories'] as $directory)
 		{
 			if (is_dir($directory))
 			{
-				$source = new Statement('I18n\Reader\NeonReader', array($directory));
+				$source = new Statement('I18n\Nette\NeonReader', array($directory));
 				$reader->addSetup('$service->attach(?)', array($source));
 				$cache->addSetup('$service->add_directory_option(?, ?)', array($directory, '*.neon'));
 			}
