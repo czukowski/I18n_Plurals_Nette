@@ -18,37 +18,44 @@ class NetteExtension extends CompilerExtension
 	 * @var  array  Default config.
 	 */
 	protected $defaults = array(
-		// Default application language.
+		// Default application language, ie translate to this language if no target language
+		// specified in translate function call.
 		'defaultLang' => 'en-us',
-		// Directories containing application translations.
-		// May be more than one if application contains multiple modules.
+		// Directories containing application translations. May be more than one if
+		// application contains multiple modules, each adding to the translations list.
+		// Paths may contain template keys from config parameters section, eg `%appDir%/i18n`.
 		'directories' => array(),
-		// List of available languages.
-		// Useful when default language is set automatiaclly from Request headers.
+		// List of available languages. Useful when default language is set automatically
+		// from HTTP Request headers.
 		'languages' => NULL,
-		// If set to TRUE, wraps parameter names into percent signs (eg %param%), so
-		// that translation keys can look similarly to the replacement parameters in
-		// neon configuration, while using bare param keys in the translate calls.
-		// Ex: `{_'I have %count% strings to translate', $count, ['count' => $count]}`
+		// If set to TRUE, wraps replacement parameter names into percent signs (eg. `param`
+		// becomes `%param%`), so that translation keys can look similarly to the template
+		// parameters in neon configuration file, while using bare parameter keys in the
+		// translate calls.
+		// Example: `{_'I have %count% strings to translate', $count, ['count' => $count]}`.
+		// Default value is FALSE, but if the application uses only neon files as translation
+		// sources, using this may look nicer. Changing this parameter mid-way will require to
+		// review all translate calls across your application.
 		'useNeonStyleParams' => FALSE,
-		// If set to TRUE, will automatically set default language from HTTP request
-		// (the respective function can also be called manually). Only languages from
-		// the `languages` list will be set.
+		// If set to TRUE, will automatically set default language from HTTP Request (the
+		// respective function can also be called manually). Only languages existing in the
+		// languages` list will be set, according to priorities in the headers.
 		'setLangFromRequestHeaders' => FALSE,
-		// If set to TRUE, replaces `latte.templateFactory` service with a new one,
-		// that implements a callback on template create. This callback may be used
-		// to inject translator to templates automatically.
+		// If set to TRUE, replaces `latte.templateFactory` service with a new one, that
+		// implements a callback on template create. This callback may be used to inject
+		// translator to templates automatically (default value is FALSE, but if you use custom
+		// Latte Template Factory replacement, you may set it to TRUE safely).
 		'replaceLatteFactory' => FALSE,
-		// This is a class name that will be used for the replacement template factory.
-		// This setting allows to override it and use another class that implements the
-		// same functionality, if needed. The setting will have no effect, unless the
-		// `replaceLatteFactory` parameter is set to TRUE.
+		// This is a class name that will be used for the replacement template factory. This
+		// setting allows to override it and use another class that implements the same
+		// functionality, if needed (default value: `'I18n\Nette\TemplateFactory'`). This setting
+		// will have no effect, unless the `replaceLatteFactory` parameter is set to TRUE.
 		'latteFactoryClass' => 'I18n\Nette\TemplateFactory',
-		// If set to TRUE, will try to inject translator to templates automatically.
-		// If `replaceLatteFactory` is set to TRUE, this parameter is also set to TRUE
-		// implicitly. The only valid use case to set this parameter is when another
-		// the template factory is already replaced by another class, and it is still
-		// desired to auto-set translator to templates using `onCreateTemplate` callback.
+		// If set to TRUE, will inject translator to templates automatically, using the replacement
+		// Latte Template Factory. If `replaceLatteFactory` is set to TRUE, this parameter is also
+		// set to TRUE implicitly. The only valid use case to set this parameter is when another
+		// template factory is already replaced by another class, and it is still desired to auto-set
+		// translator to templates using `onCreateTemplate` callback.
 		'autoSetTranslatorToTemplates' => FALSE,
 	);
 
