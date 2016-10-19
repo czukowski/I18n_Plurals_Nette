@@ -22,7 +22,7 @@ class NetteExtension extends CompilerExtension
 		'defaultLang' => 'en-us',
 		// Directories containing application translations.
 		// May be more than one if application contains multiple modules.
-		'directories' => array('%appDir%/i18n'),
+		'directories' => array(),
 		// List of available languages.
 		// Useful when default language is set automatiaclly from Request headers.
 		'languages' => NULL,
