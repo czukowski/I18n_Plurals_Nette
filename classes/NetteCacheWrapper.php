@@ -9,14 +9,13 @@ use ArrayAccess,
  * This is a wrapper for the Nette cache service. Experimental!
  * 
  * @package    I18n
- * @category   Readers
+ * @category   Nette
  * @author     Korney Czukowski
  * @copyright  (c) 2015 Korney Czukowski
  * @license    MIT License
  */
 class NetteCacheWrapper implements ArrayAccess
 {
-	const DIRECTORIES = 'directories';
 	/**
 	 * @var  Cache  Nette cache service.
 	 */
@@ -30,6 +29,8 @@ class NetteCacheWrapper implements ArrayAccess
 	 */
 	private $_options;
 
+	const DIRECTORIES = 'directories';
+
 	/**
 	 * @param  Cache  $cache    Nette cache service
 	 * @param  array  $options  Wrapper options
@@ -37,20 +38,20 @@ class NetteCacheWrapper implements ArrayAccess
 	public function __construct(Cache $cache, array $options = array())
 	{
 		$this->_cache = $cache;
-		$this->_set_options($options);
+		$this->setOptions($options);
 	}
 
 	/**
 	 * @param  array  $options
 	 */
-	private function _set_options($options)
+	private function setOptions($options)
 	{
 		$this->_options = $options;
 		if (isset($options[self::DIRECTORIES]) && is_array($options[self::DIRECTORIES]))
 		{
 			foreach ($options[self::DIRECTORIES] as $path => $file_mask)
 			{
-				$this->add_directory_option($path, $file_mask);
+				$this->addDirectoryOption($path, $file_mask);
 			}
 			unset($this->_options['directories']);
 		}
@@ -60,7 +61,7 @@ class NetteCacheWrapper implements ArrayAccess
 	 * @param  string  $path
 	 * @param  string  $file_mask
 	 */
-	public function add_directory_option($path, $file_mask)
+	public function addDirectoryOption($path, $file_mask)
 	{
 		$found = $this->_find_files($path, $file_mask);
 		if ($found)

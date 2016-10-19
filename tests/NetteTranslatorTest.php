@@ -8,7 +8,7 @@ use I18n\Tests;
  * @package    Plurals
  * @category   Unit tests
  * @author     Korney Czukowski
- * @copyright  (c) 2014 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  * @group      plurals
  */
@@ -17,46 +17,46 @@ class NetteTranslatorTest extends Testcase
 	/**
 	 * @var  array
 	 */
-	private $_constructor_arguments = array();
+	private $constructorArguments = array();
 
 	/**
-	 * @dataProvider  provide_construct
+	 * @dataProvider  provideConstruct
 	 */
-	public function test_construct($arguments, $expected)
+	public function testConstruct($arguments, $expected)
 	{
-		$this->_constructor_arguments = $arguments;
-		$this->setup_object();
+		$this->constructorArguments = $arguments;
+		$this->setupObject();
 		$default_lang = new \ReflectionProperty($this->object, 'default_lang');
 		$default_lang->setAccessible(TRUE);
 		$actual = $default_lang->getValue($this->object);
 		$this->assertSame($expected, $actual);
 	}
 
-	public function provide_construct()
+	public function provideConstruct()
 	{
 		// [constructor arguments, expcted default lang]
 		return array(
 			array(array(), 'x'),
 			array(array('cs'), 'cs'),
 			array(array('cs-cz'), 'cs-cz'),
-			array(array($this->_create_context(NULL)), 'x'),
-			array(array($this->_create_context('cs')), 'cs'),
+			array(array($this->createContext(NULL)), 'x'),
+			array(array($this->createContext('cs')), 'cs'),
 		);
 	}
 
-	private function _create_context($default_locale)
+	private function createContext($defaultLocale)
 	{
 		$context = new \stdClass;
-		$context->parameters['defaultLocale'] = $default_locale;
+		$context->parameters['defaultLocale'] = $defaultLocale;
 		return $context;
 	}
 
 	/**
-	 * @dataProvider  provide_attach
+	 * @dataProvider  provideAttach
 	 */
-	public function test_attach($reader)
+	public function testAttach($reader)
 	{
-		$this->setup_object();
+		$this->setupObject();
 		$this->object->attach($reader);
 		$core = $this->object->getService();
 		$readers = new \ReflectionProperty($core, '_readers');
@@ -66,7 +66,7 @@ class NetteTranslatorTest extends Testcase
 		$this->assertSame($reader, reset($actual));
 	}
 
-	public function provide_attach()
+	public function provideAttach()
 	{
 		// [reader object]
 		return array(
@@ -86,19 +86,19 @@ class NetteTranslatorTest extends Testcase
 	}
 
 	/**
-	 * @dataProvider  provide_translate
+	 * @dataProvider  provideTranslate
 	 */
-	public function test_translate($arguments, $default_lang, $expected)
+	public function testTranslate($arguments, $defaultLang, $expected)
 	{
-		$this->_constructor_arguments = array($default_lang);
-		$this->setup_object();
+		$this->constructorArguments = array($defaultLang);
+		$this->setupObject();
 		$this->object->attach(new Tests\DefaultReader);
 		$translate = new \ReflectionMethod($this->object, 'translate');
 		$actual = $translate->invokeArgs($this->object, $arguments);
 		$this->assertSame($expected, $actual);
 	}
 
-	public function provide_translate()
+	public function provideTranslate()
 	{
 		// [arguments, default lang, expected]
 		return array(
@@ -122,8 +122,8 @@ class NetteTranslatorTest extends Testcase
 		);
 	}
 
-	protected function _object_constructor_arguments()
+	protected function getObjectConstructorArguments()
 	{
-		return $this->_constructor_arguments;
+		return $this->constructorArguments;
 	}
 }

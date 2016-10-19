@@ -147,9 +147,10 @@ object instance internally.
 
   * @param  I18n\Reader\ReaderInterface  $reader
 
-Attaches a Reader object to the Core object (see below). `I18n\NeonReader` is a suggested default reader
-for Nette application, although there's `I18n\NetteReader` that gets translations from raw PHP files and
-you may of course also implement your own readers to provide translations from any source of your choice.
+Attaches a Reader object to the Core object (see below). `I18n\Nette\NeonReader` is a suggested default
+reader for Nette application, although there's `I18n\Nette\NetteReader` that gets translations from raw PHP
+files placed similarly into the Nette application, and you may of course also implement your own readers to
+provide translations from any source of your choice.
 
 #### public function getAvailableLanguages()
 
@@ -173,7 +174,7 @@ Returns default language, used when no target language passed to translate funct
 
 Sets default language.
 
-#### public function setLanguageFromHeaders(IRequest $httpRequest)
+#### public function setLanguageFromHeaders(Nette\Http\IRequest $httpRequest)
 
   * @param   Nette\Http\IRequest  $httpRequest
   * @return  $this

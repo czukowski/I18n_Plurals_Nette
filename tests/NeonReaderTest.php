@@ -1,17 +1,18 @@
 <?php
 namespace I18n\Nette;
+use ReflectionMethod;
 
 /**
  * @package    Plurals
  * @category   Unit tests
  * @author     Korney Czukowski
- * @copyright  (c) 2013 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  * @group      plurals
  */
 class NeonReaderTest extends ReaderTestcase
 {
-	private $temp_file;
+	private $tempFile;
 	protected $i18n = array(
 		'cs.neon' => <<<NEON
 test: test
@@ -27,25 +28,25 @@ NEON
 	);
 
 	/**
-	 * @dataProvider  provide_load_file
+	 * @dataProvider  provideLoadFile
 	 */
-	public function test_load_file($neon, $expected)
+	public function testLoadFile($neon, $expected)
 	{
-		$this->setup_object();
-		$load_file = new \ReflectionMethod($this->object, 'load_file');
+		$this->setupObject();
+		$load_file = new ReflectionMethod($this->object, 'load_file');
 		$load_file->setAccessible(TRUE);
 		if ($neon)
 		{
 			// Write neon content to temporary file.
-			$this->temp_file = tempnam(sys_get_temp_dir(), 'i18n');
-			file_put_contents($this->temp_file, $neon);
+			$this->tempFile = tempnam(sys_get_temp_dir(), 'i18n');
+			file_put_contents($this->tempFile, $neon);
 		}
 		// Load neon from temporary file.
-		$actual = $load_file->invoke($this->object, $this->temp_file);
+		$actual = $load_file->invoke($this->object, $this->tempFile);
 		$this->assertSame($expected, $actual);
 	}
 
-	public function provide_load_file()
+	public function provideLoadFile()
 	{
 		return array(
 			array(
@@ -72,23 +73,23 @@ NEON
 		);
 	}
 
-	protected function _load_file($content)
+	protected function loadFile($content)
 	{
-		$decode = new \ReflectionMethod($this->object, 'decode');
+		$decode = new ReflectionMethod($this->object, 'decode');
 		$decode->setAccessible(TRUE);
 		return $decode->invoke($this->object, $content);
 	}
 
-	protected function _object_constructor_arguments()
+	protected function getObjectConstructorArguments()
 	{
 		return array('callback://app/');
 	}
 
 	public function tearDown()
 	{
-		if ($this->temp_file)
+		if ($this->tempFile)
 		{
-			unlink($this->temp_file);
+			unlink($this->tempFile);
 		}
 	}
 }

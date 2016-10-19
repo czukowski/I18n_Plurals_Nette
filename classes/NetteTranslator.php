@@ -10,6 +10,7 @@ use I18n\Core,
  * Nette Translator adapter class
  * 
  * @package    I18n
+ * @category   Nette
  * @author     Korney Czukowski
  * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
@@ -45,22 +46,22 @@ class NetteTranslator implements ITranslator
 	/**
 	 * Instanciates a new I18n\Core object.
 	 * 
-	 * @param  string   $default_lang
-	 * @param  boolean  $use_neon_style_params
+	 * @param  string   $defaultLang
+	 * @param  boolean  $useNeonStyleParams
 	 */
-	public function __construct($default_lang = 'x', $use_neon_style_params = FALSE)
+	public function __construct($defaultLang = 'x', $useNeonStyleParams = FALSE)
 	{
-		if (is_object($default_lang))
+		if (is_object($defaultLang))
 		{
 			// For backward compatibility get the default lang value from context object.
 			// Do not use this way if you can avoid it.
-			$default_lang = isset($default_lang->parameters['defaultLocale'])
-				? $default_lang->parameters['defaultLocale']
+			$defaultLang = isset($defaultLang->parameters['defaultLocale'])
+				? $defaultLang->parameters['defaultLocale']
 				: 'x';
 		}
-		$this->default_lang = $default_lang;
+		$this->default_lang = $defaultLang;
 		$this->i18n = new Core;
-		$this->use_neon_style_params = $use_neon_style_params;
+		$this->use_neon_style_params = $useNeonStyleParams;
 	}
 
 	/**

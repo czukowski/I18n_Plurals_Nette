@@ -1,29 +1,31 @@
 <?php
 namespace I18n\Nette;
+use PHPUnit_Framework_TestCase,
+	ReflectionClass;
 
 /**
  * @package    Plurals
  * @category   Unit tests
  * @author     Korney Czukowski
- * @copyright  (c) 2012 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  */
-abstract class Testcase extends \PHPUnit_Framework_TestCase
+abstract class Testcase extends PHPUnit_Framework_TestCase
 {
 	protected $object;
 
-	public function setup_object()
+	public function setupObject()
 	{
-		$class = new \ReflectionClass($this->class_name());
-		$this->object = $class->newInstanceArgs($this->_object_constructor_arguments());
+		$class = new ReflectionClass($this->getClassName());
+		$this->object = $class->newInstanceArgs($this->getObjectConstructorArguments());
 	}
 
-	public function class_name()
+	public function getClassName()
 	{
 		return preg_replace('#Test$#', '', get_class($this));
 	}
 
-	protected function _object_constructor_arguments()
+	protected function getObjectConstructorArguments()
 	{
 		return array();
 	}

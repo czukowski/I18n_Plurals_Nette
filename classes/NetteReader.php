@@ -10,7 +10,7 @@ use I18n\Reader\FileBasedReader;
  * @package    I18n
  * @category   Readers
  * @author     Korney Czukowski
- * @copyright  (c) 2013 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  */
 class NetteReader extends FileBasedReader

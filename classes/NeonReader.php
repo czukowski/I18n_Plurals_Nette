@@ -11,7 +11,7 @@ use Nette\Neon\Neon;
  * @package    I18n
  * @category   Readers
  * @author     Korney Czukowski
- * @copyright  (c) 2014 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  */
 class NeonReader extends NetteReader

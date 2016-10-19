@@ -5,7 +5,7 @@ namespace I18n\Nette;
  * @package    Plurals
  * @category   Unit tests
  * @author     Korney Czukowski
- * @copyright  (c) 2013 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  * @group      plurals
  */
@@ -25,7 +25,7 @@ class NetteReaderTest extends ReaderTestcase
 		),
 	);
 
-	protected function _load_file($content)
+	protected function loadFile($content)
 	{
 		return $content;
 	}

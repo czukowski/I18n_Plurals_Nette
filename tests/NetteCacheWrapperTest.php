@@ -6,16 +6,17 @@ use Nette\Caching\Cache;
  * @package    Plurals
  * @category   Unit tests
  * @author     Korney Czukowski
- * @copyright  (c) 2015 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
  * @group      plurals
  */
 class NetteCacheWrapperTest extends Testcase
 {
-	private $_cache_data;
-	private $_cache_options;
+	private $cacheData;
+	private $cacheOptions;
 
-	private function _create_files_list($directory) {
+	private function createFilesList($directory)
+	{
 		// Will return list of PHP files in the tests directory.
 		// This is needed for the caching 'files' option test that should normally work with
 		// the source translation files, but since there aren't any shipped with this package,
@@ -31,17 +32,17 @@ class NetteCacheWrapperTest extends Testcase
 	}
 
 	/**
-	 * @dataProvider  provide_add_directory_option
+	 * @dataProvider  provideAddFirectoryOption
 	 */
-	public function test_add_directory_option($path, $mask, $expected)
+	public function testAddFirectoryOption($path, $mask, $expected)
 	{
-		$object = new NetteCacheWrapper($this->create_cache_mock());
-		$object->add_directory_option($path, $mask);
+		$object = new NetteCacheWrapper($this->createCacheMock());
+		$object->addDirectoryOption($path, $mask);
 		$object['any key'] = 'any data';
-		$this->assertEquals($expected, $this->_cache_options);
+		$this->assertEquals($expected, $this->cacheOptions);
 	}
 
-	public function provide_add_directory_option()
+	public function provideAddFirectoryOption()
 	{
 		$directory = realpath(__DIR__);
 		return array(
@@ -49,7 +50,7 @@ class NetteCacheWrapperTest extends Testcase
 				$directory,
 				'*.php',
 				array(
-					Cache::FILES => $this->_create_files_list($directory),
+					Cache::FILES => $this->createFilesList($directory),
 				),
 			),
 			array(
@@ -61,16 +62,16 @@ class NetteCacheWrapperTest extends Testcase
 	}
 
 	/**
-	 * @dataProvider  provide_constructor_options
+	 * @dataProvider  provideConstructorOptions
 	 */
-	public function test_constructor_options($options, $expected)
+	public function testConstructorOptions($options, $expected)
 	{
-		$object = new NetteCacheWrapper($this->create_cache_mock(), $options);
+		$object = new NetteCacheWrapper($this->createCacheMock(), $options);
 		$object['any key'] = 'any data';
-		$this->assertEquals($expected, $this->_cache_options);
+		$this->assertEquals($expected, $this->cacheOptions);
 	}
 
-	public function provide_constructor_options()
+	public function provideConstructorOptions()
 	{
 		$directory = realpath(__DIR__);
 		return array(
@@ -85,7 +86,7 @@ class NetteCacheWrapperTest extends Testcase
 					),
 				),
 				array(
-					Cache::FILES => $this->_create_files_list($directory),
+					Cache::FILES => $this->createFilesList($directory),
 				),
 			),
 			array(
@@ -98,7 +99,7 @@ class NetteCacheWrapperTest extends Testcase
 				array(
 					Cache::FILES => array_merge(
 						array('en-us.neon'),
-						$this->_create_files_list($directory)
+						$this->createFilesList($directory)
 					),
 				),
 			),
@@ -106,11 +107,11 @@ class NetteCacheWrapperTest extends Testcase
 	}
 
 	/**
-	 * @dataProvider  provide_array_access
+	 * @dataProvider  provideArrayAccess
 	 */
-	public function test_array_access($key, $value)
+	public function testArrayAccess($key, $value)
 	{
-		$this->setup_object();
+		$this->setupObject();
 		$this->assertFalse(isset($this->object[$key]));
 		$this->object[$key] = $value;
 		$this->assertTrue(isset($this->object[$key]));
@@ -119,7 +120,7 @@ class NetteCacheWrapperTest extends Testcase
 		$this->assertFalse(isset($this->object[$key]));
 	}
 
-	public function provide_array_access()
+	public function provideArrayAccess()
 	{
 		return array(
 			array('en', array('key1' => 'value1')),
@@ -128,38 +129,38 @@ class NetteCacheWrapperTest extends Testcase
 
 	public function setUp()
 	{
-		$this->_cache_data = array();
+		$this->cacheData = array();
 		parent::setUp();
 	}
 
-	protected function _object_constructor_arguments()
+	protected function getObjectConstructorArguments()
 	{
-		return array($this->create_cache_mock());
+		return array($this->createCacheMock());
 	}
 
 	/**
 	 * @return  Nette\Caching\Cache
 	 */
-	protected function create_cache_mock()
+	protected function createCacheMock()
 	{
 		$cache = $this->getMock('Nette\Caching\Cache', array(), array(), '', FALSE);
 		$cache->expects($this->any())
 			->method('load')
-			->will($this->returnCallback(array($this, 'callback_cache_load')));
+			->will($this->returnCallback(array($this, 'callbackCacheLoad')));
 		$cache->expects($this->any())
 			->method('save')
-			->will($this->returnCallback(array($this, 'callback_cache_save')));
+			->will($this->returnCallback(array($this, 'callbackCacheSave')));
 		return $cache;
 	}
 
-	public function callback_cache_load($key)
+	public function callbackCacheLoad($key)
 	{
-		return isset($this->_cache_data[$key]) ? $this->_cache_data[$key] : NULL;
+		return isset($this->cacheData[$key]) ? $this->cacheData[$key] : NULL;
 	}
 
-	public function callback_cache_save($key, $value, $options = array())
+	public function callbackCacheSave($key, $value, $options = array())
 	{
-		$this->_cache_data[$key] = $value;
-		$this->_cache_options = $options;
+		$this->cacheData[$key] = $value;
+		$this->cacheOptions = $options;
 	}
 }

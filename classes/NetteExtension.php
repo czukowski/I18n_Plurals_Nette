@@ -1,13 +1,13 @@
 <?php
 namespace I18n\Nette;
 use Nette\DI\CompilerExtension,
-    Nette\DI\Statement;
+	Nette\DI\Statement;
 
 /**
  * NetteExtension
  * 
  * @package    I18n
- * @category   DI
+ * @category   Nette
  * @author     Korney Czukowski
  * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License

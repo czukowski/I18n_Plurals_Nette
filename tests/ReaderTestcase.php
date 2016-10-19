@@ -5,27 +5,26 @@ namespace I18n\Nette;
  * @package    Plurals
  * @category   Unit tests
  * @author     Korney Czukowski
- * @copyright  (c) 2014 Korney Czukowski
+ * @copyright  (c) 2016 Korney Czukowski
  * @license    MIT License
- * @group      plurals
  */
 abstract class ReaderTestcase extends Testcase
 {
-	protected $app_path = 'callback://app/';
-	protected $callback_counters = array();
+	protected $appPath = 'callback://app/';
+	protected $callbackCounters = array();
 	protected $i18n = array();
 
 	/**
-	 * @dataProvider  provide_get
+	 * @dataProvider  provideGet
 	 */
-	public function test_get($expected, $string, $lang, $default_lang)
+	public function testGet($expected, $string, $lang, $default_lang)
 	{
-		$this->setup_get($default_lang);
+		$this->setupGet($default_lang);
 		$actual = $this->object->get($string, $lang);
 		$this->assertSame($expected, $actual);
 		// Call the method again to make sure the translation table has been read from cache this time.
 		$this->object->get($string, $lang);
-		foreach ($this->callback_counters as $key => $counter)
+		foreach ($this->callbackCounters as $key => $counter)
 		{
 			if ($counter > 1)
 			{
@@ -34,7 +33,7 @@ abstract class ReaderTestcase extends Testcase
 		}
 	}
 
-	public function provide_get()
+	public function provideGet()
 	{
 		// [expected, string, lang, default_lang]
 		return array(
@@ -63,32 +62,32 @@ abstract class ReaderTestcase extends Testcase
 	{
 		foreach (array_keys($this->i18n) as $key)
 		{
-			$this->callback_counters[$key] = 0;
+			$this->callbackCounters[$key] = 0;
 		}
 	}
 
-	protected function setup_get($default_lang)
+	protected function setupGet($default_lang)
 	{
 		$arguments = array(
-			$this->app_path,
+			$this->appPath,
 			$default_lang,
 		);
-		$this->object = $this->getMock($this->class_name(), array('load_file'), $arguments);
+		$this->object = $this->getMock($this->getClassName(), array('load_file'), $arguments);
 		$this->object->expects($this->any())
 			->method('load_file')
-			->will($this->returnCallback(array($this, 'callback_load_file')));
+			->will($this->returnCallback(array($this, 'callbackLoadFile')));
 	}
 
-	public function callback_load_file($path)
+	public function callbackLoadFile($path)
 	{
-		$file = preg_replace('#^'.preg_quote($this->app_path, '#').'#', '', str_replace(DIRECTORY_SEPARATOR, '/', $path));
+		$file = preg_replace('#^'.preg_quote($this->appPath, '#').'#', '', str_replace(DIRECTORY_SEPARATOR, '/', $path));
 		if (isset($this->i18n[$file]))
 		{
-			$this->callback_counters[$file]++;
-			return $this->_load_file($this->i18n[$file]);
+			$this->callbackCounters[$file]++;
+			return $this->loadFile($this->i18n[$file]);
 		}
 		return array();
 	}
 
-	abstract protected function _load_file($content);
+	abstract protected function loadFile($content);
 }
