@@ -105,7 +105,9 @@ Configuration options available for this Nette extension:
 How to make the translations work
 ---------------------------------
 
-You can find the information about the translation contexts, plural forms and even more in [the base package readme](https://github.com/czukowski/I18n_Plural#translation-contexts). *It is omitted here in order to avoid duplication*.
+You can find the information about the translation contexts, plural forms and even more in
+[the base package readme](https://github.com/czukowski/I18n_Plural#translation-contexts). *It is
+omitted here in order to avoid duplication*.
 
 Translating in Nette templates
 ------------------------------
