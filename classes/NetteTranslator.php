@@ -3,6 +3,7 @@ namespace I18n\Nette;
 use I18n\Core,
 	I18n\Reader\ReaderInterface,
 	InvalidArgumentException,
+	Nette\Http\IRequest,
 	Nette\Localization\ITranslator;
 
 /**
