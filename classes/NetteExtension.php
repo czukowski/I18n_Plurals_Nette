@@ -31,6 +31,10 @@ class NetteExtension extends CompilerExtension
 		// neon configuration, while using bare param keys in the translate calls.
 		// Ex: `{_'I have %count% strings to translate', $count, ['count' => $count]}`
 		'useNeonStyleParams' => FALSE,
+		// If set to TRUE, will automatically set default language from HTTP request
+		// (the respective function can also be called manually). Only languages from
+		// the `languages` list will be set.
+		'setLangFromRequestHeaders' => FALSE,
 		// If set to TRUE, replaces `latte.templateFactory` service with a new one,
 		// that implements a callback on template create. This callback may be used
 		// to inject translator to templates automatically.
@@ -53,12 +57,15 @@ class NetteExtension extends CompilerExtension
 		$container = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
 
-		$container->addDefinition($this->prefix('translator'))
+		$translator = $container->addDefinition($this->prefix('translator'))
 			->setClass('I18n\Nette\NetteTranslator')
 			->setArguments(array($config['defaultLang'], $config['useNeonStyleParams']))
 			->addSetup('$service->attach(?)', array($this->prefix('@reader')))
-			->addSetup('$service->setAvailableLanguages(?)', array($config['languages']))
-			->addSetup('$service->setLanguageFromHeaders(?)', array('@httpRequest'));
+			->addSetup('$service->setAvailableLanguages(?)', array($config['languages']));
+		if ($config['setLangFromRequestHeaders'])
+		{
+			$translator->addSetup('$service->setLanguageFromHeaders(?)', array('@httpRequest'));
+		}
 		$reader = $container->addDefinition($this->prefix('reader'))
 			->setClass('I18n\Reader\PrefetchingReader')
 			->setArguments(array($this->prefix('@cache')));
@@ -94,7 +101,8 @@ class NetteExtension extends CompilerExtension
 				->setFactory($config['latteFactoryClass']);
 			$config['autoSetTranslatorToTemplates'] = TRUE;
 		}
-		if ($config['autoSetTranslatorToTemplates']) {
+		if ($config['autoSetTranslatorToTemplates'])
+		{
 			$container->getDefinition('latte.templateFactory')
 				->addSetup('$service->onCreateTemplate[] = ?', array(array($this->prefix('@translator'), 'setTranslator')));
 		}
