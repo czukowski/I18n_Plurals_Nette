@@ -1,9 +1,13 @@
 Introduction
 ============
 
-This package will help you to do grammatically accurate translations in your Nette application (framework version 2.2+ supported).
+This package will help you to do grammatically accurate translations in your Nette application
+(framework version 2.2+ supported).
 
-The _suggested_ translation sources for Nette application are actually Neon files which may be located virtually anywhere in the application, for example, `app/i18n` folder, this will be used for the examples. Note that you are not limited in where you store your translations: also pure PHP files, databases and even all of them together may be used!
+The _suggested_ translation sources for Nette application are actually Neon files which may be
+located virtually anywhere in the application, for example, `app/i18n` folder, this will be used
+for the examples. Note that you are not limited in where you store your translations: also pure
+PHP files, databases and even all of them together may be used!
 
 Installation and setup
 ----------------------
@@ -12,30 +16,25 @@ Add to your application using Composer:
 
 `composer require czukowski/i18n-nette`
 
-In your application code you'll need to make sure the i18n directory is known to the Configurator, perhaps in `index.php` or bootstrap:
-
-```php
-$parameters['i18nDir'] = $parameters['appDir'].'/i18n'
-```
-
-Services configuration example (supposing 'en-us' is the default language):
+Add I18n service to your configuration file:
 
 ```yaml
-services:
-  # This is the Translation service.
-  i18n:
-    class: I18n\Nette\NetteTranslator('en-us')
-    setup:
-      - attach(@i18n.reader)
-  # This is the Reader service that is the source of translation strings.
-  # It is possible to attach multiple readers to the translator.
-  i18n.reader: I18n\Nette\NeonReader(%i18nDir%)
-```
+extensions:
+    i18n: I18n\Nette\NetteExtension
 
-Alternatively this may be put into a Nette extension.
+i18n:
+    defaultLang: cs       # Default fallback language
+    directories:          # List of directories containing i18n files
+        - %appDir%/i18n
+    languages:            # List of languages available in the application,
+        - cs              # it is useful for choosing default language from
+        - en              # HTTP request headers
+```
 
 Place your translations into the i18n directory, like this:
 
+ * `en.neon` - English translations,
+ * `cs.neon` - Czech translations,
  * `fr.neon` - General French translations,
  * `fr/be.neon` - Belgium French translations that are different from general French,
  * `fr/ch.neon` - Swiss French translations that are different from general French.
@@ -60,12 +59,48 @@ to them, for example (this is assuming you've named your `NetteTranslator` servi
 $control->setTranslator($this->context->getService('i18n'));
 // Set translator to form (Nette\Forms\Form):
 $form->setTranslator($this->context->getService('i18n'));
-// Set translator to template (Nette\Templating\Template):
+// Set translator to template (Nette\Templating\Template or Nette\Bridges\ApplicationLatte\Template):
 $template->setTranslator($this->context->getService('i18n'));
 ```
 
 After setting the translator to the templates, you'll be able to use the translation macro:
 `{_'translate this'}`. We'll get into the details on its usage later on.
+
+Configuration options
+---------------------
+
+Configuration options available for this Nette extension:
+
+ - `defaultLang` - Default application language, ie translate to this language if no target
+   language specified in translate function call (default value: 'en-us').
+ - `directories` - Directories containing application translations. May be more than one if
+   application contains multiple modules, each adding to the translations list. Paths may contain
+   template keys from config parameters section, eg `%appDir%/i18n` (no default value).
+ - `languages` - List of available languages. Useful when default language is set automatically
+    from HTTP Request headers (no default value).
+ - `useNeonStyleParams` - If set to TRUE, wraps replacement parameter names into percent signs
+   (eg. `param` becomes `%param%`), so that translation keys can look similarly to the template
+   parameters in neon configuration file, while using bare parameter keys in the translate calls.
+   Example: `{_'I have %count% strings to translate', $count, ['count' => $count]}`. Default value
+   is FALSE, but if your application uses only neon files as translation sources, using this may
+   look nicer. Changing this parameter mid-way will require to review all translate calls across
+   your application, so choose wisely.
+ - `setLangFromRequestHeaders` - If set to TRUE, will automatically set default language from HTTP
+   Request (the respective function can also be called manually). Only languages existing in the
+   `languages` list will be set, according to priorities in the headers.
+ - `replaceLatteFactory` - If set to TRUE, replaces `latte.templateFactory` service with a new one,
+   that implements a callback on template create. This callback may be used to inject translator to
+   templates automatically (default value is FALSE, but if you use custom Latte Template Factory
+   replacement, you may set it to TRUE safely).
+ - `latteFactoryClass` - This is a class name that will be used for the replacement template factory.
+   This setting allows to override it and use another class that implements the same functionality, if
+   needed (default value: `'I18n\Nette\TemplateFactory'`). This setting will have no effect, unless
+   the `replaceLatteFactory` parameter is set to TRUE.
+ - `autoSetTranslatorToTemplates` - If set to TRUE, will inject translator to templates automatically,
+   using the replacement Latte Template Factory. If `replaceLatteFactory` is set to TRUE, this parameter
+   is also set to TRUE implicitly. The only valid use case to set this parameter is when another template
+   factory is already replaced by another class, and it is still desired to auto-set translator to
+   templates using `onCreateTemplate` callback.
 
 How to make the translations work
 ---------------------------------
@@ -86,6 +121,9 @@ Here are some examples, those are pretty self-explanatory:
 	// All arguments present, including target language.
 	{_'You have :count messages', $count, [':count' => $count], 'cs'}
 
+Note: if you use `useNeonStyleParams`, the translation could look like:
+
+	{_'You have %count% messages', $count, ['count' => $count], 'cs'}
 
 API
 ---
@@ -97,9 +135,10 @@ The base package API is covered in its own readme.
 You are not required to use core object directly. This class is a Nette-compatible wrapper and it's the
 suggested usage in Nette applications. See above for an example on how to setup a trasnlation service.
 
-#### public function __construct($default_lang = 'x')
+#### public function __construct($default_lang = 'x', $use_neon_style_params = FALSE)
 
-  * @param  string  $default_lang
+  * @param  string   $default_lang
+  * @param  boolean  $use_neon_style_params
 
 Translator constructor takes default language to use when none is specified explicitly. Initializes a Core
 object instance internally.
@@ -111,6 +150,47 @@ object instance internally.
 Attaches a Reader object to the Core object (see below). `I18n\NeonReader` is a suggested default reader
 for Nette application, although there's `I18n\NetteReader` that gets translations from raw PHP files and
 you may of course also implement your own readers to provide translations from any source of your choice.
+
+#### public function getAvailableLanguages()
+
+Returns list of available languages.
+
+#### public function setAvailableLanguages($langs)
+
+  * @param   array  $langs
+  * @return  $this
+
+Sets list of available languages.
+
+#### public function getDefaultLanguage()
+
+Returns default language, used when no target language passed to translate function call.
+
+#### public function setDefaultLanguage($lang)
+
+  * @param   string  $lang
+  * @return  $this
+
+Sets default language.
+
+#### public function setLanguageFromHeaders(IRequest $httpRequest)
+
+  * @param   Nette\Http\IRequest  $httpRequest
+  * @return  $this
+
+Sets default language from HTTP Request headers, if at least one of accepted language is
+contained in the available languages list. The one with the highest priority is chosen.
+
+#### public function setTranslator($object)
+
+  * @param  object  $object
+
+Sets Nette translator (`$this` object instance) to the compatible objects:
+
+ - `'Nette\Bridges\ApplicationLatte\Template'`
+ - `'Nette\Forms\Controls\BaseControl'`
+ - `'Nette\Forms\Form'`
+ - `'Nette\Templating\Template'`
 
 #### public function translate($string, $count, $parameters, $lang)
 
