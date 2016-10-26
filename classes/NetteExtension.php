@@ -86,7 +86,7 @@ class NetteExtension extends CompilerExtension
 			{
 				$source = new Statement('I18n\Nette\NeonReader', array($directory));
 				$reader->addSetup('$service->attach(?)', array($source));
-				$cache->addSetup('$service->add_directory_option(?, ?)', array($directory, '*.neon'));
+				$cache->addSetup('$service->addDirectoryOption(?, ?)', array($directory, '*.neon'));
 			}
 		}
 
