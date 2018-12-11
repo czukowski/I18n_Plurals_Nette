@@ -2,7 +2,7 @@ Introduction
 ============
 
 This package will help you to do grammatically accurate translations in your Nette application
-(framework version 2.2+ supported).
+(framework version 2.2+ supported; still working great in 2.4, yay!).
 
 The _suggested_ translation sources for Nette application are actually Neon files which may be
 located virtually anywhere in the application, for example, `app/i18n` folder, this will be used
@@ -43,24 +43,26 @@ If you request the translation for 'fr-CH' locale, it'll look in the `fr/ch.neon
 that in the general `fr.neon`. If the translation wasn't found even there, the untranslated input string
 is returned.
 
-The translation data structure is very similar to what you're used to in Neon configuration:
+The translation data structure is very similar to what you're used to in Neon configuration (may be
+either flat or nested, your choice!):
 
 ```yaml
 string: řetězec
 section:
-	string: 'řetězec v podsekci'
+    string: 'řetězec v podsekci'
 ```
 
 Some of the Nette controls are ready for translations, you just need to set the translator instance
-to them, for example (this is assuming you've named your `NetteTranslator` service 'i18n'):
+to them in your factories, for example (assuming `$this->translator` is an instance of the translator
+service provided by this package):
 
 ```php
 // Set translator to control (Nette\Forms\Controls\BaseControl):
-$control->setTranslator($this->context->getService('i18n'));
+$control->setTranslator($this->translator);
 // Set translator to form (Nette\Forms\Form):
-$form->setTranslator($this->context->getService('i18n'));
+$form->setTranslator($this->translator);
 // Set translator to template (Nette\Templating\Template or Nette\Bridges\ApplicationLatte\Template):
-$template->setTranslator($this->context->getService('i18n'));
+$template->setTranslator($this->translator);
 ```
 
 After setting the translator to the templates, you'll be able to use the translation macro:
